@@ -30,8 +30,7 @@ class BaseNet(LightningModule):
         self.weight_decay = self.config.weight_decay
 
     def train_dataloader(self):
-        noise_dir = self.config.NOISE_DIR
-        train_dataset = GWDataset(self.train_df, noise_dir, mode="train")
+        train_dataset = GWDataset(self.train_df, mode="train")
         train_loader = DataLoader(
             train_dataset,
             batch_size=self.batch_size,
@@ -119,8 +118,7 @@ class G2NetEval(BaseNet):
         ]
 
     def train_dataloader(self):
-        noise_dir = f"{self.config.ROOT}/noise/"
-        train_dataset = GWDataset(self.train_df, noise_dir, mode="val")
+        train_dataset = GWDataset(self.train_df, mode="val")
         train_loader = DataLoader(
             train_dataset,
             batch_size=self.batch_size,
@@ -138,11 +136,6 @@ class G2NetEval(BaseNet):
         loss = self.loss_fn(preds, y)
         if batch_idx % 5 == 0:
             self.log("train_loss", loss, on_step=True, on_epoch=True, sync_dist=True)
-        if (batch_idx < 20) & (self.use_rocopt):
-            self.whole_y_pred = np.append(
-                self.whole_y_pred, preds.detach().cpu().numpy()
-            )
-            self.whole_y_t = np.append(self.whole_y_t, y.detach().cpu().numpy())
         return loss
 
 

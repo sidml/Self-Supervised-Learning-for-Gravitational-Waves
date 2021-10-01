@@ -28,21 +28,13 @@ def background_timeshift(waves, max_shift=600):
 
 
 class GWDatasetBandpass:
-    def __init__(self, df, noise_dir=None, mode="train"):
+    def __init__(self, df, mode="train"):
         self.mode = mode
         self.df = df
         self.df["target"] = self.df["target"].astype(np.float32)
         self.sr = 2048
         self.signal_time = 6  # 3 signals of 2s at 2048Hz
         self.bandpass = ButterFilter(20, 600, 2048, 8)
-
-        if self.mode == "train":
-            from glob import glob
-
-            noise_files = glob(f"{noise_dir}/*.npy")
-            self.noise_fp = []
-            for fn in noise_files:
-                self.noise_fp.append(np.load(fn, mmap_mode="r"))
 
     def __len__(self):
         return len(self.df)
@@ -51,18 +43,6 @@ class GWDatasetBandpass:
         fid, label, file_path = self.df.loc[idx]
         waves = np.load(file_path)
         if self.mode == "train":
-            # if random.random() < 0.5:
-            #     sel_noise = np.random.randint(0, len(self.noise_fp))
-            #     noise = self.noise_fp[sel_noise]
-            #     start = np.random.randint(
-            #         0, int(len(noise) - self.sr * (self.signal_time + 0.1))
-            #     )
-            #     end = start + self.sr * self.signal_time
-            #     noise = noise[start:end].reshape(3, -1)
-            #     noise = (noise - noise.min()) / (noise.max() - noise.min())
-            #     noise = noise * 1e-22  # scale to required min-max
-            #     waves = waves + noise
-
             if random.random() < 0.5:
                 waves = background_timeshift(waves)
 
@@ -89,9 +69,8 @@ if __name__ == "__main__":
     # bce loss requires labels to be of float type
     train_labels["target"] = train_labels["target"].astype(np.float32)
     train_labels["file_path"] = train_labels["id"].apply(get_train_file_path)
-    noise_dir = f"{ROOT}/noise/"
 
-    dataset = GWDatasetBandpass(train_labels, noise_dir, mode="train")
+    dataset = GWDatasetBandpass(train_labels, mode="train")
     tic = time.time_ns()
     for i in range(10):
         wave, label = dataset[i]

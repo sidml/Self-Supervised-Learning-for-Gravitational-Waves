@@ -37,7 +37,6 @@ class Config:
     TRAIN_ROOT = f"{ROOT}/train/"
     TEST_ROOT = f"{ROOT}/test/"
     SUB_DIR = "./submissions/"
-    NOISE_DIR = f"{ROOT}/noise/"
 
 
 if __name__ == "__main__":
@@ -82,8 +81,6 @@ if __name__ == "__main__":
         progress_bar_refresh_rate=5,
         limit_val_batches=0.3,
         val_check_interval=0.5,
-        # limit_train_batches=0.2,
-        # limit_val_batches=2,
         # deterministic=True,
         # gradient_clip_val=2,
         # benchmark=True,

@@ -46,7 +46,6 @@ class Config:
     suffix = "eval"
     ROOT = "/datadrive2/gwdet/"
     TRAIN_ROOT = f"{ROOT}/train/"
-    # TRAIN_ROOT = f"{ROOT}/melspec_train_with_noise/"
     TEST_ROOT = f"{ROOT}/test/"
     SUB_DIR = "./submissions/"
 
@@ -61,10 +60,6 @@ if __name__ == "__main__":
     get_path = partial(get_file_path, config.TRAIN_ROOT)
     train_labels["file_path"] = train_labels["id"].apply(get_path)
     print(train_labels.head())
-
-    # cv_preds = pd.read_csv("cv_resnest50d_1s4x24d_cqt_randomerase.csv")
-    # cv_preds["diff"] = np.abs(cv_preds["target"] - cv_preds["preds"])
-    # cv_preds = cv_preds.set_index("id")
 
     if config.train:
         trn_idx = np.random.randint(0, len(train_labels), (int(len(train_labels)*0.9),))
@@ -91,8 +86,6 @@ if __name__ == "__main__":
             progress_bar_refresh_rate=3,
             limit_train_batches=0.1,
             limit_val_batches=0.3,
-            # limit_train_batches=2,
-            # limit_val_batches=2,
             deterministic=True,
             gradient_clip_val=2,
             benchmark=True,
@@ -145,7 +138,7 @@ if __name__ == "__main__":
         model.load_state_dict(averaged_w)
         model.eval()
 
-        val_idx = val_idx[:2000]
+        val_idx = val_idx[:20000]
         val_df = train_labels.loc[val_idx].reset_index(drop=True)
         dataset = GWDataset(val_df, mode="val")
         test_loader = DataLoader(
@@ -204,7 +197,6 @@ if __name__ == "__main__":
         root_dir = (
             f"{config.ROOT}/{config.model_name}_{config.suffix}/lightning_logs"
         )
-        print(f"\n{root_dir}/version_0/checkpoints/*.ckpt")
         paths = list(glob(f"{root_dir}/version_0/checkpoints/*.ckpt"))
         print(paths)
         model = Net(paths, mode='val').to(device)
@@ -222,9 +214,9 @@ if __name__ == "__main__":
         tk = tqdm(test_loader, total=len(test_loader))
         sub_index = 0
         with torch.no_grad():
-            for i, (im, _) in enumerate(tk):
-                im = im.to(device)
-                preds = model(im,
+            for i, (waves, _) in enumerate(tk):
+                waves = waves.to(device)
+                preds = model(waves,
                               mode="test").reshape(-1,)
                 o = preds.sigmoid().cpu().numpy()
                 for val in o:
