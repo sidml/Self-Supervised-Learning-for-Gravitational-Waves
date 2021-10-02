@@ -30,7 +30,8 @@ class BaseNet(LightningModule):
         self.weight_decay = self.config.weight_decay
 
     def train_dataloader(self):
-        train_dataset = GWDataset(self.train_df, mode="train")
+        noise_dir = self.config.NOISE_DIR
+        train_dataset = GWDataset(self.train_df, noise_dir, mode="train")
         train_loader = DataLoader(
             train_dataset,
             batch_size=self.batch_size,

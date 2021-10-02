@@ -35,9 +35,9 @@ class Config:
     suffix = "barlow"
     ROOT = "/datadrive2/gwdet/"
     TRAIN_ROOT = f"{ROOT}/train/"
+    NOISE_DIR = f"{ROOT}/gwdet-noise"
     TEST_ROOT = f"{ROOT}/test/"
     SUB_DIR = "./submissions/"
-
 
 if __name__ == "__main__":
     seed_everything(42, workers=True)
