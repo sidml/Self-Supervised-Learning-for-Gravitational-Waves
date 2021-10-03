@@ -1,9 +1,13 @@
-This repo contains code for training a 1d CNN model for detecting gravitational waves using semi-supervised training. The trained model was able to get 0.86 ROC-AUC Score on Kaggle LB.
+This repo contains code for training a 1d CNN model for detecting gravitational waves using semi-supervised training. The trained model was able to get 0.859 ROC-AUC Score on Kaggle LB.  
+
 
 ## Useful links:
 - [Barlow Twins Paper](https://arxiv.org/pdf/2103.03230.pdf)
 - [Gravitational Wave Dataset](https://www.kaggle.com/c/g2net-gravitational-wave-detection/data)
 - [1D CNN trained using supervised learning](https://www.kaggle.com/scaomath/g2net-1d-cnn-gem-pool-pytorch-train-inference)
+- [Training on kaggle kernel](https://www.kaggle.com/meaninglesslives/self-supervised-method-for-gravitation-wave-det)
+
+**I have setup a [kaggle notebook](https://www.kaggle.com/meaninglesslives/self-supervised-method-for-gravitation-wave-det) that you can use to get started easily if you are new to the competiation or don't want to download the dataset (around 80GB).**
 
 ## Context:
 
